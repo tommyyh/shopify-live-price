@@ -4,6 +4,7 @@ const Shopify = require('shopify-api-node');
 
 require('dotenv').config();
 
+const PORT = 5000;
 const shopify = new Shopify({
   shopName: process.env.SHOP_NAME,
   apiKey: process.env.API_KEY,
@@ -32,7 +33,7 @@ const getShopifyProducts = async () => {
 };
 
 // Main
-const main = async () => {
+app.get('/update', async (req, res) => {
   const updatedProduct = await getUpdatedProducts();
   const shopifyProducts = await getShopifyProducts();
 
@@ -47,8 +48,14 @@ const main = async () => {
         },
       ],
     })
-    .then((product) => console.log(product))
-    .catch((err) => console.log(err));
+    .then((product) => {
+      console.log(product);
+      res.send(product);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    });
 
   // console.log(shopifyProducts[0].variants[0].price);
   // console.log(updatedProduct);
@@ -88,6 +95,8 @@ const main = async () => {
   //     .then((product) => console.log(product))
   //     .catch((err) => console.log(err));
   // });
-};
+});
 
-main();
+app.listen(process.env.PORT, () =>
+  console.log(`Listening to port ${process.env.PORT}`)
+);
